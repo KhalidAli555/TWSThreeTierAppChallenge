@@ -13,12 +13,6 @@ environment {
 
 stages {
 
-    stage('Clone Repository') {
-        steps {
-            git 'https://github.com/KhalidAli555/TWSThreeTierAppChallenge.git'
-        }
-    }
-
     stage('Build Docker Images') {
         steps {
             sh '''
