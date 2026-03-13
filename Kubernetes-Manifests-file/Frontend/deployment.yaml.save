@@ -18,10 +18,10 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: khalidali07/tws-frontend-threetier:04
+        image: khalidali07/tws-frontend-threetier:02
         imagePullPolicy: Always
         env:
           - name: REACT_APP_BACKEND_URL
-            value: "http://98.94.14.46:30500/api/tasks" # internal cluster URL
+            value: "http:/:30007/api/tasks" # internal cluster URL
         ports:
-        - containerPort: 80
+        - containerPort: 3000

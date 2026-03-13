@@ -15,17 +15,17 @@ spec:
     spec: 
       containers:
       - name: mon
-        image: mongo:4.4.6
+        image: mongo:6.0
         command:
-            - "numactl"
-            - "--interleave=all"
-            - "mongod"
-            - "--wiredTigerCacheSizeGB"
-            - "0.1"
-            - "--bind_ip"
-            - "0.0.0.0"
+          - "numactl"
+          - "--interleave=all"
+          - "mongod"
+          - "--wiredTigerCacheSizeGB"
+          - "0.25"
+          - "--bind_ip"
+          - "0.0.0.0"
         ports:
-        - containerPort: 27017
+          - containerPort: 27017
         env: 
           - name: MONGO_INITDB_ROOT_USERNAME
             valueFrom:
@@ -40,7 +40,14 @@ spec:
         volumeMounts:
           - name: mongo-volume
             mountPath: /data/db
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
       volumes: 
-      - name: mongo-volume
-        persistentVolumeClaim:
-          claimName: mongo-volume-claim
+        - name: mongo-volume
+          persistentVolumeClaim:
+            claimName: mongo-volume-claim

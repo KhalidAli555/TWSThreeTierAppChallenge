@@ -1,6 +1,13 @@
-FROM node:14
-WORKDIR /usr/src/app
+# Step 1: Build
+FROM node:20-alpine AS build
+WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-CMD [ "npm", "start" ]
+RUN npm run build
+
+# Step 2: Serve with Nginx
+FROM nginx:stable-alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

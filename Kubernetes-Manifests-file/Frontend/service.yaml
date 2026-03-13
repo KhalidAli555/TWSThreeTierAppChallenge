@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Service
-metadata: 
+metadata:
   name: frontend
   namespace: three-tier
 spec:
-  ports:
-  - port: 3000
-    protocol: TCP
-  type: ClusterIP
+  type: NodePort
   selector:
-    role: frontend
+    app: frontend
+  ports:
+    - port: 80         # service port
+      targetPort: 80 # container port
+      nodePort: 30080  # optional, agar specify karna ho

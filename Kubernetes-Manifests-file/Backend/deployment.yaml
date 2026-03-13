@@ -1,35 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata: 
-  name: api
+metadata:
+  name: backend
   namespace: three-tier
-  labels: 
-    role: api
+  labels:
+    app: backend
     env: demo
-spec: 
-  replicas: 2
-  strategy: 
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 25%
-  selector: 
+spec:
+  replicas: 1
+  selector:
     matchLabels:
-      role: api
+      app: backend
   template:
     metadata:
       labels:
-        role: api
+        app: backend
     spec:
-      imagePullSecrets:
-      - name: ecr-registry-secret
       containers:
-      - name: api
-        image: 407622020962.dkr.ecr.us-east-1.amazonaws.com/backend:latest
+      - name: backend
+        image: khalidali07/tws-backend-threetier:latest
         imagePullPolicy: Always
         env:
-          - name: MONGO_CONN_STR
-            value: mongodb://mongodb-svc:27017/todo?directConnection=true
           - name: MONGO_USERNAME
             valueFrom:
               secretKeyRef:
@@ -40,18 +31,27 @@ spec:
               secretKeyRef:
                 name: mongo-sec
                 key: password
+          - name: MONGO_CONN_STR
+            value: "mongodb+srv://cluster0.nrw4wro.mongodb.net/todoapp?retryWrites=true&w=majority"
         ports:
-        - containerPort: 3500
-        livenessProbe: 
+        - containerPort: 5000
+        # Resource requests and limits to avoid memory issues
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
           httpGet:
             path: /ok
-            port: 3500
+            port: 5000
           initialDelaySeconds: 2
           periodSeconds: 5
         readinessProbe:
           httpGet:
             path: /ok
-            port: 3500
+            port: 5000
           initialDelaySeconds: 5
           periodSeconds: 5
-          successThreshold: 1
