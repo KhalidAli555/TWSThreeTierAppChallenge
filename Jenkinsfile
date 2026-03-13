@@ -16,7 +16,7 @@ stages {
 
     stage('Clone Repository') {
         steps {
-            git 'https://github.com/username/your-repo.git'
+            git 'https://github.com/KhalidAli555/TWSThreeTierAppChallenge.git'
         }
     }
 
