@@ -12,7 +12,7 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code or Copy') {
+        stage('Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/KhalidAli555/TWSThreeTierAppChallenge.git'
             }
