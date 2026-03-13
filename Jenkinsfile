@@ -1,1 +1,110 @@
+pipeline {
+agent any
 
+```
+environment {
+    DOCKER_USER = "khalidali07"
+
+    BACKEND_IMAGE = "khalidali07/tws-backend-threetier"
+    FRONTEND_IMAGE = "khalidali07/tws-frontend-threetier"
+
+    BACKEND_TAG = "latest"
+    FRONTEND_TAG = "04"
+}
+
+stages {
+
+    stage('Clone Repository') {
+        steps {
+            git 'https://github.com/username/your-repo.git'
+        }
+    }
+
+    stage('Build Docker Images') {
+        steps {
+            sh '''
+            docker build -t $BACKEND_IMAGE:$BACKEND_TAG ./backend
+            docker build -t $FRONTEND_IMAGE:$FRONTEND_TAG ./frontend
+            '''
+        }
+    }
+
+    stage('Login to DockerHub') {
+        steps {
+            withCredentials([usernamePassword(
+            credentialsId: 'dockerhub',
+            usernameVariable: 'USER',
+            passwordVariable: 'PASS'
+            )]) {
+
+            sh '''
+            echo $PASS | docker login -u $USER --password-stdin
+            '''
+            }
+        }
+    }
+
+    stage('Push Docker Images') {
+        steps {
+            sh '''
+            docker push $BACKEND_IMAGE:$BACKEND_TAG
+            docker push $FRONTEND_IMAGE:$FRONTEND_TAG
+            '''
+        }
+    }
+
+    stage('Deploy Namespace') {
+        steps {
+            sh 'kubectl apply -f Kubernetes-Manifests-file/namespace.yaml'
+        }
+    }
+
+    stage('Deploy Database') {
+        steps {
+            sh 'kubectl apply -f Kubernetes-Manifests-file/database/'
+        }
+    }
+
+    stage('Deploy Backend') {
+        steps {
+            sh 'kubectl apply -f Kubernetes-Manifests-file/backend/'
+        }
+    }
+
+    stage('Deploy Frontend') {
+        steps {
+            sh 'kubectl apply -f Kubernetes-Manifests-file/frontend/'
+        }
+    }
+
+    stage('Rolling Restart') {
+        steps {
+            sh '''
+            kubectl rollout restart deployment backend -n three-tier
+            kubectl rollout restart deployment frontend -n three-tier
+            '''
+        }
+    }
+
+    stage('Verify Deployment') {
+        steps {
+            sh '''
+            kubectl get pods -n three-tier
+            kubectl get svc -n three-tier
+            '''
+        }
+    }
+
+}
+
+post {
+    success {
+        echo 'Deployment Successful!'
+    }
+    failure {
+        echo 'Pipeline Failed!'
+    }
+}
+```
+
+}
