@@ -58,19 +58,19 @@ pipeline {
 
         stage('Deploy Database') {
             steps {
-                sh 'kubectl apply -f Kubernetes-Manifests-file/database/'
+                sh 'kubectl apply -f Kubernetes-Manifests-file/Database/'
             }
         }
 
         stage('Deploy Backend') {
             steps {
-                sh 'kubectl apply -f Kubernetes-Manifests-file/backend/'
+                sh 'kubectl apply -f Kubernetes-Manifests-file/Backend/'
             }
         }
 
         stage('Deploy Frontend') {
             steps {
-                sh 'kubectl apply -f Kubernetes-Manifests-file/frontend/'
+                sh 'kubectl apply -f Kubernetes-Manifests-file/Frontend/'
             }
         }
 
