@@ -1,7 +1,6 @@
 pipeline {
 agent any
 
-```
 environment {
     DOCKER_USER = "khalidali07"
 
@@ -105,6 +104,5 @@ post {
         echo 'Pipeline Failed!'
     }
 }
-```
 
 }
